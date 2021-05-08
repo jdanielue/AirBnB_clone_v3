@@ -15,6 +15,13 @@ def task0(exception):
     """get the status of this page """
     storage.close()
 
+
+@app.errorhandler(404)
+def get_404(e):
+    """get the status of this page """
+    mydict = {"error": "Not found"}
+    return mydict
+
 if __name__ == "__main__":
     hosta = getenv("HBNB_API_HOST")
     porta = getenv("HBNB_API_PORT")
