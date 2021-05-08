@@ -61,6 +61,7 @@ def get_state(state_id=None):
             return "Not a JSON", 400
         to_update = storage.get(State, state_id)
         for element, value in header_dict.items():
-            setattr(to_update, element, value)
+            if element not in ['id', 'created_at', 'updated_at']:
+                setattr(to_update, element, value)
         storage.save()
         return to_update.to_dict(), 201
