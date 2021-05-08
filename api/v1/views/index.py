@@ -9,7 +9,8 @@ from models.review import Review
 from models.state import State
 from models.user import User
 
-list_of_classes = [Amenity, City, Place, Review, State, User]
+classes = {"amenities": Amenity, "cities": City,
+           "places": Place, "reviews": Review, "states": State, "users": User}
 
 
 @app_views.route('/status', strict_slashes=False, methods=('GET',))
@@ -23,6 +24,6 @@ def get_status():
 def get_stats():
     """get the stats of storage """
     dict_stats = {}
-    for clase in list_of_classes:
-        dict_stats[clase.__name__] = storage.count(clase)
+    for clase, valor in classes.items():
+        dict_stats[clase] = storage.count(valor)
     return dict_stats
