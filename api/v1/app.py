@@ -20,7 +20,7 @@ def task0(exception):
 def get_404(e):
     """get the status of this page """
     mydict = {"error": "Not found"}
-    return mydict
+    return mydict, 404
 
 if __name__ == "__main__":
     hosta = getenv("HBNB_API_HOST")
