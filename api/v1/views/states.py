@@ -28,11 +28,11 @@ def get_state(state_id=None):
         if state_id is None:
             for element in dict_instances:
                 list_todict += [dict_instances[element].to_dict()]
-            return jsonify(list_todict)
         elif id_name in dict_instances:
-            return jsonify(dict_instances[id_name].to_dict())
+            list_todict = (dict_instances[id_name].to_dict())
         else:
             return error_dict, 404
+        return jsonify(list_todict)
     elif request.method == 'DELETE':
         if id_name in dict_instances:
             obj = storage.get(State, state_id)
