@@ -20,29 +20,11 @@ from flask import jsonify, request
                  methods=('GET', 'DELETE', 'POST', 'PUT'))
 def get_city(city_id=None, state_id=None):
     current_state = storage.get(State, state_id)
-    return jsonify(current_state.cities)
-
-    """
-    list_todict = []
-    dict_instances = storage.all(City)
-    id_name = "City." + str(city_id)
     error_dict = {"error": "Not found"}
     if request.method == 'GET':
-        if city_id is None:
-            for element in dict_instances:
-                list_todict += [dict_instances[element].to_dict()]
-        elif id_name in dict_instances:
-            list_todict += [dict_instances[id_name].to_dict()]
-        else:
-            mydict = {"error": "Not found"}
-            return error_dict, 404
-        return jsonify(list_todict)
-    elif request.method == 'DELETE':
-        if id_name in dict_instances:
-            obj = storage.get(City, city_id)
-            storage.delete(obj)
-            storage.save()
-            return {}, 200
+        if current_state is not None:
+            list_cities = map(lambda x: x.to_dict(), current_state.cities)
+            return jsonify(list(list_cities))
         else:
             return error_dict, 404
     elif request.method == 'POST':
@@ -52,19 +34,42 @@ def get_city(city_id=None, state_id=None):
                 return "Missing name", 400
         except:
             return "Not a JSON", 400
+        header_dict['state_id'] = state_id
         new_city = City(**header_dict)
         new_city.save()
         return new_city.to_dict(), 201
+
+
+@app_views.route('/cities/<city_id>', strict_slashes=False,
+                 methods=('GET', 'DELETE', 'POST', 'PUT'))
+def get_city_no_state(city_id=None):
+    """This function retrieves a city"""
+    current_city = storage.get(City, city_id)
+    error_dict = {"error": "Not found"}
+
+    if request.method == 'GET':
+        if current_city is not None:
+            return current_city.to_dict()
+        else:
+            return error_dict, 404
+    elif request.method == 'DELETE':
+        obj = storage.get(City, city_id)
+        if obj is not None:
+            storage.delete(obj)
+            storage.save()
+            return {}, 200
+        else:
+            return error_dict, 404
     elif request.method == 'PUT':
-        if id_name not in dict_instances:
+        obj = storage.get(City, city_id)
+        if obj is None:
             return error_dict, 404
         try:
             header_dict = request.get_json()
         except:
             return "Not a JSON", 400
-        to_update = storage.get(City, city_id)
         for element, value in header_dict.items():
             if element not in ['id', 'created_at', 'updated_at']:
-                setattr(to_update, element, value)
+                setattr(obj, element, value)
         storage.save()
-        return to_update.to_dict(), 201"""
+        return obj.to_dict(), 201
