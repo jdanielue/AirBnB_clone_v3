@@ -31,7 +31,6 @@ def get_state(state_id=None):
         elif id_name in dict_instances:
             list_todict += [dict_instances[id_name].to_dict()]
         else:
-            mydict = {"error": "Not found"}
             return error_dict, 404
         return jsonify(list_todict)
     elif request.method == 'DELETE':
