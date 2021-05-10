@@ -30,23 +30,21 @@ def get_place(place_id=None, city_id=None):
         else:
             return error_dict, 404
     elif request.method == 'POST':
-        header_dict = request.get_json()
-        if storage.get(City, header_dict["city_id"]) is None:
-            return error_dict, 404
         try:
             header_dict = request.get_json()
+            if storage.get(City, header_dict["city_id"]) is None:
+                return error_dict, 404
             if 'name' not in header_dict:
                 return "Missing name", 400
             if 'user_id' not in header_dict:
                 return "Missing user_id", 400
+            if storage.get(User, header_dict["user_id"]) is None:
+                return error_dict, 404
         except:
-            return "Not a JSON", 400
-        if storage.get(User, header_dict["user_id"]) is None:
-            return error_dict, 404
-        else:
-            new_place = Place(**header_dict)
-            new_place.save()
-            return new_place.to_dict(), 201
+            return jsonify("Not a JSON"), 400
+        new_place = Place(**header_dict)
+        new_place.save()
+        return new_place.to_dict(), 201
 
 
 @app_views.route('/places/<place_id>', strict_slashes=False,
