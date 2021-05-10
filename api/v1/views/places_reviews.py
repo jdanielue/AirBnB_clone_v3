@@ -58,20 +58,19 @@ def get_list_review(place_id=None, review_id=None):
             return error_dict, 404
         try:
             header_dict = request.get_json()
+            if 'name' not in header_dict:
+                return "Missing name", 400
+            if 'user_id' not in header_dict:
+                return "Missing user_id", 400
+            if 'text' not in header_dict:
+                return "Missing text", 400
+            if storage.get(User, header_dict["user_id"]) is None:
+                return error_dict, 404
         except:
-            return "Not a JSON", 400
-        if 'name' not in header_dict:
-            return "Missing name", 400
-        if 'user_id' not in header_dict:
-            return "Missing user_id", 400
-        if 'text' not in header_dict:
-            return "Missing text", 400
-        if storage.get(User, header_dict["user_id"]) is None:
-            return error_dict, 404
-        else:
-            new_review = Review(**header_dict)
-            new_review.save()
-            return new_review.to_dict(), 201
+            return jsonify("Not a JSON"), 400
+        new_review = Review(**header_dict)
+        new_review.save()
+        return new_review.to_dict(), 201
     elif request.method == 'PUT':
         current_review = storage.get(Review, review_id)
         if current_review is None:
