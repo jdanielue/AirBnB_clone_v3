@@ -28,11 +28,11 @@ def get_state(state_id=None):
         if state_id is None:
             for element in dict_instances:
                 list_todict += [dict_instances[element].to_dict()]
+            return jsonify(list_todict)
         elif id_name in dict_instances:
-            list_todict += [dict_instances[id_name].to_dict()]
+            return jsonify(dict_instances[id_name].to_dict())
         else:
             return error_dict, 404
-        return jsonify(list_todict)
     elif request.method == 'DELETE':
         if id_name in dict_instances:
             obj = storage.get(State, state_id)
@@ -45,9 +45,9 @@ def get_state(state_id=None):
         try:
             header_dict = request.get_json()
             if 'name' not in header_dict:
-                return "Missing name", 400
+                return jsonify("Missing name"), 400
         except:
-            return "Not a JSON", 400
+            return jsonify("Not a JSON"), 400
         new_state = State(**header_dict)
         new_state.save()
         return new_state.to_dict(), 201
@@ -57,7 +57,7 @@ def get_state(state_id=None):
         try:
             header_dict = request.get_json()
         except:
-            return "Not a JSON", 400
+            return jsonify("Not a JSON"), 400
         to_update = storage.get(State, state_id)
         for element, value in header_dict.items():
             if element not in ['id', 'created_at', 'updated_at']:
