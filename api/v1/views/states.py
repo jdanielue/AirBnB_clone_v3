@@ -45,7 +45,7 @@ def get_state(state_id=None):
         try:
             header_dict = request.get_json()
             if 'name' not in header_dict:
-                return "Missing name", 400
+                return jsonify("Missing name"), 400
         except:
             return jsonify("Not a JSON"), 400
         new_state = State(**header_dict)
@@ -57,7 +57,7 @@ def get_state(state_id=None):
         try:
             header_dict = request.get_json()
         except:
-            return "Not a JSON", 400
+            return jsonify("Not a JSON"), 400
         to_update = storage.get(State, state_id)
         for element, value in header_dict.items():
             if element not in ['id', 'created_at', 'updated_at']:
