@@ -47,7 +47,7 @@ def get_state(state_id=None):
             if 'name' not in header_dict:
                 return "Missing name", 400
         except:
-            return "Not a JSON", 400
+            return jsonify("Not a JSON"), 400
         new_state = State(**header_dict)
         new_state.save()
         return new_state.to_dict(), 201
