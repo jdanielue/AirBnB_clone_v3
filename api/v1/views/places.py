@@ -23,13 +23,12 @@ def get_place(place_id=None, city_id=None):
     error_dict = {"error": "Not found"}
     list_places = []
     if request.method == 'GET':
-        if current_place is not None:
-            for llave, valor in storage.all(Cities).items():
-                if place_id in valor.to_dict().values():
-                    list_places += [valor.to_dict()]
-            if len(list_places) != 0:
-                return jsonify(list_places)
-        return error_dict, 404
+        if current_city is not None:
+            list_places = map(lambda x: x.to_dict(), current_city.places)
+            """return str(type(current_city))"""
+            return jsonify(list(list_places))
+        else:
+            return error_dict, 404
     elif request.method == 'POST':
         header_dict = request.get_json()
         if storage.get(City, header_dict["city_id"]) is None:
